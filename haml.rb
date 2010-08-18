@@ -24,12 +24,11 @@ module Jekyll
           raise HamlErrorException.new if result.empty?
           puts "Rendering #{f}"
           output_file_name = File.basename(f, ".haml") + output_extension
-          File.open(File.join(self.config['destination'], output_file_name),'w') {|f| f.write(result)} if !File.exists?(output_file_name) or (File.exists?(output_file_name) and result != File.read(output_file_name))
+          File.open(File.join(self.config['destination'], output_file_name),'w') {|f| f.write(result)}
         rescue HamlErrorException => e
         end
       end
     end
-  end
 
     def compile_sass(files, input_regex, output_extension)
       Dir.glob(files).each do |f| 
