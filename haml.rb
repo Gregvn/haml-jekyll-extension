@@ -1,13 +1,12 @@
 require 'rubygems'
 require 'haml'
 require 'sass'
-require 'pathname'
 
 module Jekyll
   class Site
     def haml2html
       haml_folder = self.config['haml_folder'] || '**/*.haml'
-      compile_haml(["*.haml", haml_folder], /\.haml$/,'.html')
+      compile_haml(["*.haml", haml_folder],'.html')
     end  
 
     def sass2css
@@ -17,19 +16,20 @@ module Jekyll
 
     private
 
-    def compile_haml(files, input_regex, output_extension)
+    def compile_haml(files, output_extension)
       Dir.glob(files).each do |f| 
         begin
           origin = File.open(f).read
           result = Haml::Engine.new(origin).render
           raise HamlErrorException.new if result.empty?
           puts "Rendering #{f}"
-          output_file_name = Pathname.new(f).basename.to_s.gsub!(input_regex,output_extension)
+          output_file_name = File.basename(f, ".haml") + output_extension
           File.open(File.join(self.config['destination'], output_file_name),'w') {|f| f.write(result)} if !File.exists?(output_file_name) or (File.exists?(output_file_name) and result != File.read(output_file_name))
         rescue HamlErrorException => e
         end
       end
     end
+  end
 
     def compile_sass(files, input_regex, output_extension)
       Dir.glob(files).each do |f| 
